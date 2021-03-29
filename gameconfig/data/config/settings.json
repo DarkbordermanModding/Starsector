@@ -1,0 +1,10 @@
+{
+	"combatSpeedMult":"1.5f",
+	"speedPerBurnLevel": 100,
+	"maxStormStrikeBurn": 20,
+	"maxLogisticsHullmods": 5,
+	"maxPermanentHullmods": 9,
+	"baseMaxOutposts": 10000,
+	"maxIndustries":[1,2,3,4,5,6,7,8,9,9],
+	"maxColonySize": 9
+}
