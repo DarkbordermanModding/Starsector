@@ -1,0 +1,9 @@
+{
+	"id":"darkborderman.addstation",
+	"name":"Add station",
+	"author":"Darkborderman",
+	"version":"0.0.0",
+	"description":"Can build station at stable location",
+	"gameVersion":"0.95a-RC12",
+	"jars": ["addstation.jar"]
+}

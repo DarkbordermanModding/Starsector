@@ -1,0 +1,5 @@
+{
+    "ruleCommandPackages":[
+        "data.campaign.rulecmd"
+    ]
+}
