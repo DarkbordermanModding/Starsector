@@ -22,8 +22,15 @@ build {
 
 task init_config(type: Exec) {
     description 'init config'
-    println('Paste the following line to .vscode/settings.json')
-    commandLine 'echo', '{"java.configuration.updateBuildConfiguration": "automatic", "java.project.referencedLibraries": ["lib/**/*.jar"]}'
+    commandLine 'bash', '-c', 'mkdir -p .vscode'
+    commandLine 'bash', '-c', "cat << EOF > .vscode/settings.json \n" +
+        "{\n" +
+        '  "java.configuration.updateBuildConfiguration": "automatic",\n' +
+        '  "java.project.referencedLibraries": [\n' +
+        '    "lib/**/*.jar"\n' +
+        '  ]\n' +
+        '}\n' +
+        "EOF"
 }
 
 task run(type: Exec) {

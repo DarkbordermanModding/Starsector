@@ -1,10 +1,12 @@
 package data.campaign.rulecmd;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
+
+import org.json.JSONObject;
 
 import java.util.*;
 import java.util.List;
@@ -19,27 +21,33 @@ public class PrintStationCost extends BaseCommandPlugin
         TextPanelAPI text = dialog.getTextPanel();
 
         text.addPara("Create a station requires the objectives below:");
-        String costParagraph = "";
-        for(Map.Entry<String, Number> cost : PrintStationCost.getCost().entrySet()){
-            costParagraph += cost.getKey() + " x " + (int)(float)cost.getValue() + "\n";
+        String requireParagraph = "";
+        for(Map.Entry<String, Number> cost : PrintStationCost.getCost("required").entrySet()){
+            String name = Global.getSettings().getCommoditySpec(cost.getKey()).getName();
+            requireParagraph += name + " x " + (int)(float)cost.getValue() + "\n";
         }
-        text.addPara(costParagraph);
+        text.addPara(requireParagraph);
+        text.addPara("Create a station consumes the objectives below:");
+        String consumeParagraph = "";
+        for(Map.Entry<String, Number> cost : PrintStationCost.getCost("consumed").entrySet()){
+            String name = Global.getSettings().getCommoditySpec(cost.getKey()).getName();
+            consumeParagraph += name + " x " + (int)(float)cost.getValue() + "\n";
+        }
+        text.addPara(consumeParagraph);
         return true;
     }
 
-    public static Map<String, Number> getCost(){
+    @SuppressWarnings("unchecked")
+    public static Map<String, Number> getCost(String type){
         Map<String, Number> costs = new HashMap<>();
-        costs.put(Commodities.CREW, 1000f);
-        costs.put(Commodities.FUEL, 5000f);
-        costs.put(Commodities.SUPPLIES, 1000f);
-        costs.put(Commodities.HEAVY_MACHINERY, 500f);
-        costs.put(Commodities.METALS, 1500f);
-        costs.put(Commodities.RARE_METALS, 500f);
-        costs.put(Commodities.ORE, 500f);
-        costs.put(Commodities.RARE_ORE, 500f);
-        costs.put(Commodities.FOOD, 500f);
-        costs.put(Commodities.VOLATILES, 500f);
-        costs.put(Commodities.ORGANICS, 500f);
+        try {
+            JSONObject consumed = Global.getSettings().getJSONObject("addstation").getJSONObject(type);
+            Iterator<String> keys = consumed.keys();
+            while(keys.hasNext()){
+                String key = keys.next();
+                costs.put(key , (float)consumed.getDouble(key));
+            }
+        } catch (Exception e) {}
         return costs;
     }
 }

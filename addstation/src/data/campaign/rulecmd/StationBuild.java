@@ -6,11 +6,11 @@ import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
-import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.util.Misc;
+
+import org.json.JSONArray;
 
 import java.util.*;
 import java.util.List;
@@ -65,15 +65,18 @@ public class StationBuild extends BaseCommandPlugin
         market.setFactionId(Global.getSector().getPlayerFleet().getFaction().getId());
         market.setPlayerOwned(true);
 
-        market.addCondition(Conditions.POPULATION_3);
-        market.addCondition(Conditions.ORE_MODERATE);
-        market.addCondition(Conditions.RARE_ORE_MODERATE);
-        market.addCondition(Conditions.FARMLAND_ADEQUATE);
-        market.addCondition(Conditions.VOLATILES_DIFFUSE);
-        market.addCondition(Conditions.ORGANICS_COMMON);
-
-        market.addIndustry(Industries.POPULATION);
-        market.addIndustry(Industries.SPACEPORT);
+        JSONArray industries = new JSONArray();
+        JSONArray conditions = new JSONArray();
+        try {
+            industries = Global.getSettings().getJSONObject("addstation").getJSONArray("industries");
+            conditions = Global.getSettings().getJSONObject("addstation").getJSONArray("conditions");
+            for(int i = 0; i < industries.length(); i++){
+                market.addIndustry(industries.getString(i));
+            }
+            for(int i = 0; i < conditions.length(); i++){
+                market.addCondition(conditions.getString(i));
+            }
+        } catch (Exception e) {}
 
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
@@ -96,7 +99,7 @@ public class StationBuild extends BaseCommandPlugin
 
     public void removeBuildCosts()
     {
-        Map<String, Number> costs = PrintStationCost.getCost();
+        Map<String, Number> costs = PrintStationCost.getCost("consumed");
         CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
         for(Map.Entry<String, Number> cost : costs.entrySet()){
             cargo.removeCommodity((String)cost.getKey(), (float)cost.getValue());
