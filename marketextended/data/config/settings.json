@@ -1,0 +1,31 @@
+{
+    "marketextended": {
+        "enabled": true,
+        "spawnInterval": 1,
+        "spawnTimes": 10,
+        "spawnMaxCounts": 50,
+        "spawnRadius": 15000,
+        "spawnMethod": "random",
+        "spawnFactions": [
+            "hegemony",
+            "independent",
+            "luddic_church",
+            "luddic_path",
+            "persean",
+            "pirates",
+            "sindrian_diktat",
+            "tritachyon"
+        ],
+        "reviveExtinctFaction": true,
+        "reviveFactions": [
+            "hegemony",
+            "independent",
+            "luddic_church",
+            "luddic_path",
+            "persean",
+            "pirates",
+            "sindrian_diktat",
+            "tritachyon"
+        ]
+    }
+}

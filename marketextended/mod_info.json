@@ -1,0 +1,10 @@
+{
+	"id":"darkborderman.marketextended",
+	"name":"Market extended",
+	"author":"Darkborderman",
+	"version":"0.0.0",
+	"description":"Faction will automatically build markets",
+	"gameVersion":"0.95a-RC12",
+	"jars": ["marketextended.jar"],
+	"modPlugin":"data.scripts.EntryPlugin"
+}
