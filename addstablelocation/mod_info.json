@@ -1,0 +1,10 @@
+{
+	"id":"darkborderman.addstablelocation",
+	"name":"Add Stable Locations",
+	"author":"Darkborderman",
+	"version":"0.0.0",
+	"description":"Can create numerous stable locations",
+	"gameVersion":"0.95a-RC12",
+	"jars": ["addstablelocation.jar"],
+	"modPlugin":"data.scripts.plugins.EntryPlugin"
+}
