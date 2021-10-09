@@ -16,4 +16,4 @@ SL_cancelBuild:Never mind",,,
 
 stable_buildProceedStation,DialogOptionSelected,$option == StationbuildProceed,"
 StationBuild $slBuildType
-DismissDialog",,,
+",,,

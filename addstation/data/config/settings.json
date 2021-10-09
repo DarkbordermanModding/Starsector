@@ -21,8 +21,7 @@
             "rare_ore_moderate",
             "farmland_adequate",
             "volatiles_diffuse",
-            "organics_common",
-            "volturnian_lobster_pens"
+            "organics_common"
         ],
         "industries": [
             "population",

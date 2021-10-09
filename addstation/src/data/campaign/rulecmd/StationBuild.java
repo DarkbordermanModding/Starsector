@@ -12,6 +12,9 @@ import com.fs.starfarer.api.util.Misc;
 
 import org.json.JSONArray;
 
+import data.DarkMagicThread;
+import data.Utilities;
+
 import java.util.*;
 import java.util.List;
 
@@ -25,13 +28,20 @@ public class StationBuild extends BaseCommandPlugin
         // Can be improved by selecting many kind of stations
         SectorEntityToken token = dialog.getInteractionTarget();
         String constructionType = "station_side03";
-        build(constructionType, token);
-        removeBuildCosts();
-
+        SectorEntityToken built = build(constructionType, token);
+        if(!Global.getSettings().isDevMode()) removeBuildCosts();
+        dialog.dismiss();
+        // BIG WARNING
+        // If the player doesn't view the colony management screen within a few days of market creation
+        // There can be a bug related to population growth (Instantly grow to maximum)
+        // The dialog will be closed and can't spawn a new dialog
+        // use a thread to open another dialog
+        Thread t = new Thread(new DarkMagicThread(built));
+        t.start();
         return true;
     }
 
-    public void build(String type, SectorEntityToken token){
+    public SectorEntityToken build(String type, SectorEntityToken token){
         LocationAPI loc = token.getContainingLocation();
 
         // Identity suffix
@@ -70,11 +80,11 @@ public class StationBuild extends BaseCommandPlugin
         try {
             industries = Global.getSettings().getJSONObject("addstation").getJSONArray("industries");
             conditions = Global.getSettings().getJSONObject("addstation").getJSONArray("conditions");
-            for(int i = 0; i < industries.length(); i++){
-                market.addIndustry(industries.getString(i));
-            }
             for(int i = 0; i < conditions.length(); i++){
                 market.addCondition(conditions.getString(i));
+            }
+            for(int i = 0; i < industries.length(); i++){
+                market.addIndustry(industries.getString(i));
             }
         } catch (Exception e) {}
 
@@ -83,8 +93,8 @@ public class StationBuild extends BaseCommandPlugin
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
-        Global.getSector().getEconomy().addMarket(market, true);
         built.setMarket(market);
+        Global.getSector().getEconomy().addMarket(market, true);
         built.setFaction(Global.getSector().getPlayerFleet().getFaction().getId());
 
         // Update survey and industries
@@ -95,12 +105,13 @@ public class StationBuild extends BaseCommandPlugin
             industry.doPreSaveCleanup();
             industry.doPostSaveRestore();
         }
+        return built;
     }
 
     public void removeBuildCosts()
     {
         CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
-        for(Map.Entry<String, Number> cost : PrintStationCost.getCost("consumed").entrySet()){
+        for(Map.Entry<String, Number> cost : Utilities.getCost("consumed").entrySet()){
             cargo.removeCommodity((String)cost.getKey(), (float)cost.getValue());
         }
     }
