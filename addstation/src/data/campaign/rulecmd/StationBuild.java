@@ -12,8 +12,8 @@ import com.fs.starfarer.api.util.Misc;
 
 import org.json.JSONArray;
 
-import data.DarkMagicThread;
-import data.Utilities;
+import data.addstation.DarkMagicThread;
+import data.addstation.Utilities;
 
 import java.util.*;
 import java.util.List;
@@ -77,6 +77,7 @@ public class StationBuild extends BaseCommandPlugin
 
         JSONArray industries = new JSONArray();
         JSONArray conditions = new JSONArray();
+        boolean freePort = false;
         try {
             industries = Global.getSettings().getJSONObject("addstation").getJSONArray("industries");
             conditions = Global.getSettings().getJSONObject("addstation").getJSONArray("conditions");
@@ -86,6 +87,8 @@ public class StationBuild extends BaseCommandPlugin
             for(int i = 0; i < industries.length(); i++){
                 market.addIndustry(industries.getString(i));
             }
+            freePort = Global.getSettings().getJSONObject("addstation").getBoolean("free_port");
+            market.setFreePort(freePort);
         } catch (Exception e) {}
 
         market.addSubmarket("storage");

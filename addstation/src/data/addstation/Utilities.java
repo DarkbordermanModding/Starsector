@@ -1,4 +1,4 @@
-package data;
+package data.addstation;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -26,7 +26,7 @@ public class Utilities {
     public static void setCostPanel(InteractionDialogAPI dialog, Object[] displays){
         // Due to display limit, the display will cut each 3 display items(9 length array)
         int i = 0;
-        while(i <= displays.length){
+        while(i < displays.length){
             if( i + 9 > displays.length){
                 dialog.getTextPanel().addCostPanel("", Arrays.copyOfRange(displays, i, displays.length));
             }

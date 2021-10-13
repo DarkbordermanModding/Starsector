@@ -1,4 +1,4 @@
-package data;
+package data.addstation;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorEntityToken;

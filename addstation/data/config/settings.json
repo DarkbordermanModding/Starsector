@@ -17,6 +17,7 @@
         },
         "conditions": [
             "population_3",
+            "habitable",
             "ore_moderate",
             "rare_ore_moderate",
             "farmland_adequate",
@@ -26,7 +27,8 @@
         "industries": [
             "population",
             "spaceport"
-        ]
+        ],
+        "free_port": true
     },
     "ruleCommandPackages":[
         "data.campaign.rulecmd"
