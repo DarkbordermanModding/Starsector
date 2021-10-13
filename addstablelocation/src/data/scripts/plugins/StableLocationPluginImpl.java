@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.lwjgl.input.Keyboard;
 
+import data.addstablelocation.Utilities;
+
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
@@ -14,6 +16,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.CharacterDataAPI;
+import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
@@ -58,7 +62,6 @@ public class StableLocationPluginImpl implements InteractionDialogPlugin {
 		textPanel = dialog.getTextPanel();
 		options = dialog.getOptionPanel();
 		visual = dialog.getVisualPanel();
-
 		playerFleet = Global.getSector().getPlayerFleet();
 		planet = (PlanetAPI) dialog.getInteractionTarget();
 		visual.setVisualFade(0.25f, 0.25f);
@@ -123,66 +126,94 @@ public class StableLocationPluginImpl implements InteractionDialogPlugin {
 		case ADD_STABLE_CONFIRM:
 			if (system != null) {
 				CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
-				cargo.removeFuel(STABLE_FUEL_REQ);
-				AddRemoveCommodity.addCommodityLossText(Commodities.FUEL, STABLE_FUEL_REQ, dialog.getTextPanel());
+				for(Map.Entry<String, Number> cost : Utilities.getCost("consumed").entrySet()){
+					cargo.removeCommodity((String)cost.getKey(), (float)cost.getValue());
+				}
+				addText(
+					"Preparations are made, and you give the go-ahead. " +
+					"A few tense minutes later, the chief engineer reports success. " +
+					"The resulting stable location won't last for millennia, like " +
+					"naturally-occurring ones - but it'll do for your purposes."
+				);
 				StarSystemGenerator.addStableLocations(system, 1);
-				addText("Preparations are made, and you give the go-ahead. " +
-						"A few tense minutes later, the chief engineer reports success. " +
-						"The resulting stable location won't last for millennia, like " +
-						"naturally-occurring ones - but it'll do for your purposes.");
 			}
 			createInitialOptions();
 			break;
 		case ADD_STABLE_DESCRIBE:
-			addText("The procedure requires spreading prodigious amounts of antimatter in the star's corona, " +
-					"according to calculations far beyond the ability of anything on the right side of the " +
-					"treaty that ended the Second AI War.");
-			boolean canAfford = dialog.getTextPanel().addCostPanel("Resources required (available)", 
-					Commodities.ALPHA_CORE, 1, false,
-					Commodities.HEAVY_MACHINERY, STABLE_MACHINERY_REQ, false,
-					Commodities.FUEL, STABLE_FUEL_REQ, true
-					);
-
 			options.clearOptions();
+			addText(
+				"The procedure requires spreading prodigious amounts of antimatter in the star's corona, " +
+				"according to calculations far beyond the ability of anything on the right side of the " +
+				"treaty that ended the Second AI War."
+			);
 
-			int stableLocationCount = 2;
-			try {
-				stableLocationCount = Global.getSettings().getJSONObject("addstablelocation").getInt("stableLocationCount");
-			} catch (Exception e) {}
+			Map<String, Number> required = Utilities.getCost("required");
+			if(required.size() == 0){
+				addText("Create a stable location does not require any objective.");
+			}
+			else{
+				addText("Create a stable location requires objective below:");
+				ArrayList<Object> requiredCostPanel = new ArrayList<Object>();
+				for(Map.Entry<String, Number> cost : required.entrySet()){
+					requiredCostPanel.add(cost.getKey());
+					requiredCostPanel.add((int)(float)cost.getValue());
+					requiredCostPanel.add(false);
+				}
+				Utilities.setCostPanel(dialog, requiredCostPanel.toArray());
+			}
+
+			Map<String, Number> consumed = Utilities.getCost("consumed");
+			if(consumed.size() == 0){
+				addText("Create a stable location does not consume any objective.");
+			}
+			else{
+				addText("Create a stable location consumes objective below:");
+				ArrayList<Object> consumedCostPanel = new ArrayList<Object>();
+				for(Map.Entry<String, Number> cost : consumed.entrySet()){
+					consumedCostPanel.add(cost.getKey());
+					consumedCostPanel.add((int)(float)cost.getValue());
+					consumedCostPanel.add(true);
+				}
+				Utilities.setCostPanel(dialog, consumedCostPanel.toArray());
+			}
+
+			boolean canAfford = true;
+			if(Utilities.costAvailable("required") == false || Utilities.costAvailable("consumed") == false)
+				canAfford = false;
 
 			int num = Misc.getNumStableLocations(planet.getStarSystem());
-			boolean alreadyCant = false;
-			if (num <= 0) {
-				options.addOption("Proceed with the operation", OptionId.ADD_STABLE_CONFIRM, null);
-			} else if (num < stableLocationCount) {
-				addText("Normally, this procedure can only be performed in a star system without any " +
-						"stable locations. However, your chief engineer suggests an unorthodox workaround.");
-				options.addOption("Proceed with the operation", OptionId.ADD_STABLE_CONFIRM, null);
-				SetStoryOption.set(
-					dialog,
-					Global.getSettings().getInt("createStableLocation"),
-					OptionId.ADD_STABLE_CONFIRM,
-					"createStableLocation",
-					Sounds.STORY_POINT_SPEND_TECHNOLOGY,
-					"Created additional stable location in " + planet.getStarSystem().getNameWithLowercaseType() + ""
-				);
+			int maxLocationCount = 0;
+			int storyPointCost = 0;
+			try {
+				maxLocationCount = Global.getSettings().getJSONObject("addstablelocation").getInt("maxLocationCount");
+				storyPointCost = Global.getSettings().getJSONObject("addstablelocation").getInt("storyPointCost");
+			} catch (Exception e) {}
+
+			options.addOption("Proceed with the operation", OptionId.ADD_STABLE_CONFIRM, null);
+			options.addOption("Never mind", OptionId.ADD_STABLE_NEVER_MIND, null);
+			if (num <= maxLocationCount) {
+				if(storyPointCost > 0){
+					SetStoryOption.set(
+						dialog,
+						Global.getSettings().getInt("createStableLocation"),
+						OptionId.ADD_STABLE_CONFIRM,
+						"createStableLocation",
+						Sounds.STORY_POINT_SPEND_TECHNOLOGY,
+						"Created additional stable location in " + planet.getStarSystem().getNameWithLowercaseType() + ""
+					);
+				}
 			} else {
-				alreadyCant = true;
-				String reason = "This procedure can not performed in a star system that already has " +
-								"numerous stable locations.";
-				options.addOption("Proceed with the operation", OptionId.ADD_STABLE_CONFIRM, null);
+				addText(
+					"This procedure can not performed in a star system that already has " +
+					"numerous stable locations."
+				);
 				options.setEnabled(OptionId.ADD_STABLE_CONFIRM, false);
-				addText(reason);
-				options.setTooltip(OptionId.ADD_STABLE_CONFIRM, reason);
 			}
 
-			if (!canAfford && !alreadyCant) {
-				String reason = "You do not have the necessary resources to carry out this procedure.";
+			if (!canAfford) {
+				addText("You do not have the necessary resources to carry out this procedure.");
 				options.setEnabled(OptionId.ADD_STABLE_CONFIRM, false);
-				addText(reason);
-				options.setTooltip(OptionId.ADD_STABLE_CONFIRM, reason);
 			}
-			options.addOption("Never mind", OptionId.ADD_STABLE_NEVER_MIND, null);
 			break;
 		case ADD_STABLE_NEVER_MIND:
 			createInitialOptions();
@@ -193,7 +224,7 @@ public class StableLocationPluginImpl implements InteractionDialogPlugin {
 			break;
         case SHUFFLE_STABLE_LOCATIONS:
             int stable_count = 0;
-			// use a list to record enetities, remove list item in place will raise exception
+			// use a list to record entities, remove list item in place will raise exception
 			List<SectorEntityToken> entities = new ArrayList<SectorEntityToken>();
             for(SectorEntityToken entity: planet.getStarSystem().getAllEntities()){
                 if(entity instanceof CustomCampaignEntity && entity.getCustomEntityType().equals("stable_location")){
@@ -205,7 +236,7 @@ public class StableLocationPluginImpl implements InteractionDialogPlugin {
 				system.removeEntity(entity);
 			}
 			addText("You tilt your head and locations look slightly different.");
-            StarSystemGenerator.addStableLocations(system, stable_count);
+            Utilities.addStableLocationNearStar(system, stable_count);
             break;
         }
 	}
@@ -220,7 +251,6 @@ public class StableLocationPluginImpl implements InteractionDialogPlugin {
         options.addOption("Shuffle stable location", OptionId.SHUFFLE_STABLE_LOCATIONS, null);
 		options.addOption("Leave", OptionId.LEAVE, null);
 		options.setShortcut(OptionId.LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
-
 	}
 
 	public void optionMousedOver(String optionText, Object optionData) {}
