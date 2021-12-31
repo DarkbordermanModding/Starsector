@@ -1,0 +1,9 @@
+{
+	"id":"darkborderman.fightermissiles",
+	"name":"Fighter missiles",
+	"author":"Darkborderman",
+	"version":"0.0.0",
+	"description":"Use fighter missiles",
+	"gameVersion":"0.95.1a-RC6",
+	"jars": ["fightermissiles.jar"]
+}

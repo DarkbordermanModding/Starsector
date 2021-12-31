@@ -1,0 +1,25 @@
+{
+	"quality":0.0,
+	"displayName":"Interceptor",
+	"hullId":"FW_talon_TT",
+	"variantId":"FW_talon_TT_Interceptor",
+	"fluxVents":0,
+	"fluxCapacitors":0,
+	"mods":[], # array of strings
+
+	# mode is either LINKED or ALTERNATING
+	# slot ids (WS ***) must match what's in the .ship file
+	"weaponGroups":[
+		{"mode":"LINKED",
+		 "weapons":{
+		 			"WS 001":"mininglaser",
+		 		   },
+		},
+		{"mode":"LINKED",
+		 "weapons":{
+		 			"WS 003":"harpoon_single",
+		 			#"WS 003":"swarmer",
+		 		   },
+		},
+	],
+}

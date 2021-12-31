@@ -1,0 +1,8 @@
+id,variant,tags,tier,rarity,fleet pts,op cost,formation,range,attackRunRange,attackPositionOffset,num,role,role desc,refit,base value,,,,,,,,,,,,,number
+FW_broadsword_wing,broadsword_Fighter,"fighter, no_drop, no_sell, attack_at_an_angle",0,,6,8,V,4000,500,,1,FIGHTER,Heavy Fighter,10,6000,,,,,,,,,,,,,
+FW_claw_wing,claw_Fighter,"fighter, no_drop, no_sell, attack_at_an_angle",0,,6,8,V,4000,200,600,1,FIGHTER,Fighter,10,6000,,,,,,,,,,,,,
+FW_wasp_wing,wasp_Interceptor,"interceptor, no_drop, no_sell, attack_at_an_angle",0,,5,5,V,4000,200,600,1,INTERCEPTOR,Interceptor Drone,5,6000,,,,,,,,,,,,,
+FW_talon_TT_wing,FW_talon_TT_Interceptor,"interceptor, no_drop, no_sell, attack_at_an_angle",0,,3,2,V,4000,200,600,1,INTERCEPTOR,Interceptor,5,2000,,,,,,,,,,,,,
+FW_talon_wing,talon_Interceptor,"interceptor, no_drop, no_sell, attack_at_an_angle",0,,3,2,V,4000,200,600,1,INTERCEPTOR,Interceptor,5,2000,,,,,,,,,,,,,
+FW_xyphos_wing,xyphos_Fighter,"fighter, no_drop, no_sell, attack_at_an_angle",0,,3,2,V,4000,200,600,1,SUPPORT,Support,5,2000,,,,,,,,,,,,,
+FW_warthog_wing,warthog_Fighter,"fighter, no_drop, no_sell, attack_at_an_angle",0,,3,2,V,4000,200,600,1,FIGHTER,Heavy Fighte,5,2000,,,,,,,,,,,,,
