@@ -1,3 +1,6 @@
 [submodule "AddStableLocation"]
 	path = AddStableLocation
 	url = git@github.com:DarkbordermanModding/Starsector-AddStableLocation.git
+[submodule "IllegalIndustries"]
+	path = IllegalIndustries
+	url = git@github.com:DarkbordermanModding/Starsector-IllegalIndustries.git
