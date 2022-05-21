@@ -1,0 +1,3 @@
+[submodule "AddStableLocation"]
+	path = AddStableLocation
+	url = git@github.com:DarkbordermanModding/Starsector-AddStableLocation.git
