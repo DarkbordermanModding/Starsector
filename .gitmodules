@@ -4,3 +4,6 @@
 [submodule "IllegalIndustries"]
 	path = IllegalIndustries
 	url = git@github.com:DarkbordermanModding/Starsector-IllegalIndustries.git
+[submodule "FighterMissiles"]
+	path = FighterMissiles
+	url = git@github.com:DarkbordermanModding/Starsector-FighterMissiles.git
