@@ -1,1 +1,4 @@
-# Star-Sector
+# Starsector
+
+Starsector mod index
+
